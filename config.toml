@@ -1,0 +1,48 @@
+baseurl = "http://localhost:1313"
+languageCode = "zh-cn"
+title = "Singsen"
+theme = "rocktopus"
+GoogleAnalytics = "abcde"
+paginate = 4
+MetaDataFormat = "toml"
+[permalinks]
+    post = "/:year/:month/:title/"
+[taxonomies]
+    tags = "tags"
+    series = "series"
+[author]
+    name = "Singsen"
+[params]
+	# supports either dark or light color scheme
+	colorscheme = "dark"
+    # text for the header section
+    blogHeader = "<span style=\"font-size: 36px; \">my<b>Site</b></span>"
+    tagline = "我有酒，你有故事吗"
+    # the theme assumes this will be in your static/img directory
+    headerimg = "head.jpg"
+    # used for the contact page (if you use it)
+    contactEmail = "xingchen@googer.me"
+    contactTwitter = "xingchen"
+[menu]
+    # Menu for the nav bar.
+    # Ideal count is 3 items, see demo site for an example
+    [[menu.nav]]
+    identifier = "tags"
+    name       = "tags"
+    url        = "/tags"
+    weight     = 1
+	
+	[[menu.nav]]
+    identifier = "series"
+    name       = "series"
+    url        = "/series"
+    weight     = 2
+
+    [[menu.nav]]
+    identifier = "contact"
+    name       = "contact"
+    url        = "/contact"
+    weight     = 0
+	
+	
+	
