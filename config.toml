@@ -2,7 +2,7 @@ baseurl = "http://localhost:1313"
 languageCode = "zh-cn"
 title = "Singsen"
 theme = "rocktopus"
-GoogleAnalytics = "abcde"
+GoogleAnalytics = ""
 paginate = 4
 MetaDataFormat = "toml"
 [permalinks]
