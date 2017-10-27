@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Singsen</title>
+		<meta name="author" content="Singsen">
+		<meta name="generator" content="Hugo 0.21-DEV" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/raleway.css"  type="text/css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/skeleton.css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/custom.css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/font-awesome.min.css">
+		
+	</head>
+	<body class="color-scheme-dark">
+		<div class="container" style="border-bottom: 0px solid #eee;">
+			<div class="row">
+				<div class="eight columns">
+                                        
+					<a href="https://blog.singsen.me" class="sitename"><span style="font-size: 36px; ">my<b>Site</b></span></a>
+                                        
+					
+					<span style="font-size: 14px;">|<i>我有酒，你有故事吗</i></span>
+					
+				</div>
+				<div class="four columns" >
+					
+					
+					
+					
+					<a class="navbar-link" href="https://blog.singsen.me/tags">tags</a>
+					
+					
+					
+					<a class="navbar-link" href="https://blog.singsen.me/series">series</a>
+					
+					
+					
+					<a class="navbar-rlink" href="https://blog.singsen.me/contact">contact</a>
+					
+					
+					
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			
+			<div class="row">
+				<div class="twelve columns" >
+					<img class="u-max-full-width" src="https://blog.singsen.me/img/head.jpg">
+				</div>
+			</div>
+			
+
+
+
+
+
+
+<div class="row">
+	<div class="twelve column">
+		<a class="post-title-link" href="https://blog.singsen.me/2017/09/golang%E5%9C%A8mysql%E4%B8%AD%E4%BD%BF%E7%94%A8json%E5%AF%B9%E8%B1%A1/">golang在MySQL中使用JSON对象</a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		<p style="padding-left:2px; margin-left:2px; padding-bottom:0px; margin-bottom:0px;">
+			向数据库中插入JSON对象，需要结构体实现Valuer(database/sql/driver包)接口。
+从数据库中读取JSON对象，需要结构体实现Scanner(database/sql包)接口。
+比如发布一条微博或者动态附带一些图片之类的媒体文件,可以直接用JSON对象存入数据库：
+package main import ( _ &quot;github.com/go-sql-driver/mysql&quot; &quot;database/sql&quot; &quot;database/sql/driver&quot; &quot;encoding/json&quot; &quot;log&quot; &quot;time&quot; ) type Media struct { Path string Type int } type MediaList []*Media var _ sql.Scanner = &amp;MediaList{} var _ driver.Valuer = MediaList{} //继承Scanner（Scan接受的是指针类型） func (m *MediaList) Scan(src interface{}) error { if src == nil { return nil } b, _ := src.([]byte) return json.Unmarshal(b, m) } //继承Valuer（INSERT时，Valuer不接受指针类型） func (m MediaList) Value() (driver.Value, error) { return json.
+		</p>
+	</div>
+</div>
+<div class="row">
+	<div class="nine columns">
+		<span class="post-postedby">posted by  on Sep 07, 2017</span>
+	</div>
+	<div class="three columns">
+		<span style="font-size:small;">
+			
+			<i class="fa fa-tags"></i> <a href="https://blog.singsen.metags/mysql" class="tag-link">mysql</a> <a href="https://blog.singsen.metags/golang" class="tag-link">golang</a> 
+			
+		</span>
+	</div>
+</div>
+<br>
+
+<div class="row">
+	<div class="twelve column">
+		<a class="post-title-link" href="https://blog.singsen.me/2017/09/mysql%E6%9D%83%E9%99%90%E9%85%8D%E7%BD%AE/">mysql权限配置</a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		<p style="padding-left:2px; margin-left:2px; padding-bottom:0px; margin-bottom:0px;">
+			查看用户root的权限:
+SHOW GRANTS FOR root;
+刷新用户权限:
+FLUSH PRIVILEGES;
+创建用户:
+CREATE USER 'croz'@'localhost' IDENTIFIED BY '[YOURPASSWORD]';
+赋予&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户数据库&rsquo;shzl&rsquo;的所有权限:
+GRANT ALL PRIVILEGES ON shzl.* TO 'croz'@'%';
+赋予&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户数据库&rsquo;shzl&rsquo;的SELECT权限:
+GRANT SELECT ON shzl.* TO 'croz'@'%';
+(其他权限替换SLELECT为UPDATE、DELETE等)
+移除&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户对数据库&rsquo;shzl&rsquo;的所有权限:
+REVOKE ALL PRIVILEGES ON shzl.* FROM 'croz'@'%';
+移除&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户对数据库&rsquo;shzl&rsquo;的SELECT权限:
+REVOKE SELECT ON shzl.* FROM 'croz'@'%';
+修改权限后刷新权限:
+FLUSH PRIVILEGES
+host修改为 %后还是不能远程访问，错误码 111:
+错误原因:mysql启动时只绑定了本地地址,修改/etc/mysql/my.cnf,注释掉以下内容:
+bind-address = 127.0.0.1
+(也可能my.cnf里只有两个include，就到include的目录下找相关配置，如 /etc/mysql/mysql.conf.d/mysqld.cnf)
+最后重启mysql
+sudo /etc/init.d/mysql restart
+		</p>
+	</div>
+</div>
+<div class="row">
+	<div class="nine columns">
+		<span class="post-postedby">posted by  on Sep 07, 2017</span>
+	</div>
+	<div class="three columns">
+		<span style="font-size:small;">
+			
+			<i class="fa fa-tags"></i> <a href="https://blog.singsen.metags/mysql" class="tag-link">mysql</a> 
+			
+		</span>
+	</div>
+</div>
+<br>
+
+<div class="row">
+	<div class="twelve columns">
+		<center>
+			
+			
+		</center>
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		&nbsp;
+	</div>
+</div>
+
+<div id="footer" class="row">
+	<div class="twelve columns">
+		<center>
+			<span style="font-size: small;">
+				[ powerd by <a href="https://github.com/spf13/hugo" class="copyright-link" target="#">hugo</a>, 
+				theme created by <a href="https://github.com/esell/rocktopus" class="copyright-link" target="#">esell</a> ]
+			</span>
+		</center>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+
+

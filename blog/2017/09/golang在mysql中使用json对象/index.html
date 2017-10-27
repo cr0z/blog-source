@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>golang在MySQL中使用JSON对象</title>
+		<meta name="author" content="Singsen">
+		<meta name="generator" content="Hugo 0.21-DEV" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/raleway.css"  type="text/css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/skeleton.css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/custom.css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/font-awesome.min.css">
+		
+	</head>
+	<body class="color-scheme-dark">
+		<div class="container" style="border-bottom: 0px solid #eee;">
+			<div class="row">
+				<div class="eight columns">
+                                        
+					<a href="https://blog.singsen.me" class="sitename"><span style="font-size: 36px; ">my<b>Site</b></span></a>
+                                        
+					
+					<span style="font-size: 14px;">|<i>我有酒，你有故事吗</i></span>
+					
+				</div>
+				<div class="four columns" >
+					
+					
+					
+					
+					<a class="navbar-link" href="https://blog.singsen.me/tags">tags</a>
+					
+					
+					
+					<a class="navbar-link" href="https://blog.singsen.me/series">series</a>
+					
+					
+					
+					<a class="navbar-rlink" href="https://blog.singsen.me/contact">contact</a>
+					
+					
+					
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			
+			<div class="row">
+				<div class="twelve columns" >
+					<img class="u-max-full-width" src="https://blog.singsen.me/img/head.jpg">
+				</div>
+			</div>
+			
+
+
+
+<div class="row">
+	<div class="twelve columns">
+		<a class="post-title-link" href="https://blog.singsen.me/2017/09/golang%E5%9C%A8mysql%E4%B8%AD%E4%BD%BF%E7%94%A8json%E5%AF%B9%E8%B1%A1/">golang在MySQL中使用JSON对象</a>
+	</div>
+</div>
+<div class="row">
+	<div class="nine columns">
+		<span class="post-postedby">posted by  on Sep 07, 2017</span>
+	</div>
+	<div class="three columns">
+		<span style="font-size:small;">
+			
+			<i class="fa fa-tags"></i> <a href="https://blog.singsen.metags/mysql" class="tag-link">mysql</a> <a href="https://blog.singsen.metags/golang" class="tag-link">golang</a> 
+			
+		</span>
+	</div>
+</div>
+<div class="row">
+	<div class="twelve columns">
+		<p>向数据库中插入JSON对象，需要结构体实现Valuer(database/sql/driver包)接口。<br />
+从数据库中读取JSON对象，需要结构体实现Scanner(database/sql包)接口。<br />
+比如发布一条微博或者动态附带一些图片之类的媒体文件,可以直接用JSON对象存入数据库：</p>
+
+<pre><code class="language-go">package main
+
+import (
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+    &quot;database/sql&quot;
+    &quot;database/sql/driver&quot;
+    &quot;encoding/json&quot;
+    &quot;log&quot;
+    &quot;time&quot;
+)
+
+type Media struct {
+    Path string  
+    Type int
+}
+
+type MediaList []*Media
+
+var _ sql.Scanner = &amp;MediaList{}
+var _ driver.Valuer = MediaList{}
+
+//继承Scanner（Scan接受的是指针类型）
+func (m *MediaList) Scan(src interface{}) error {
+    if src == nil {
+        return nil
+    }
+    b, _ := src.([]byte)
+    return json.Unmarshal(b, m)
+}
+
+//继承Valuer（INSERT时，Valuer不接受指针类型）
+func (m MediaList) Value() (driver.Value, error) {
+    return json.Marshal(m)
+}
+
+type Weibo struct {
+    ID        int
+    Author    string
+    Content   string
+    Media     MediaList
+    CreatedAt time.Time
+}
+
+func main() {
+    db, err := sql.Open(&quot;mysql&quot;, &quot;yourname:yourpass@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
+    //插入
+    weibo := &amp;Weibo{
+        Author:  &quot;joe&quot;,
+        Content: &quot;nice too meet you!&quot;,
+        Media: MediaList{
+            {&quot;http://www.google.com&quot;, 1},
+            {&quot;http://cn.bing.com&quot;, 1},
+        },
+    }
+    _, err = db.Exec(&quot;INSERT INTO test_table (author,content,media) VALUES (?,?,?)&quot;,
+        weibo.Author, weibo.Content, weibo.Media) //这里会调用Valuer(不接受指针类型)
+    if err != nil {
+        log.Fatal(err)
+    } else {
+        log.Println(&quot;insert success.&quot;)
+    }
+
+    //查询
+    weibo = &amp;Weibo{}
+    rows, err := db.Query(&quot;SELECT * FROM test_table WHERE id = ? LIMIT 1&quot;, 1)
+    if err != nil {
+        log.Fatal(err)
+    }
+    for rows.Next() {
+        err := rows.Scan(&amp;weibo.ID, &amp;weibo.Author, &amp;weibo.Content, &amp;weibo.Media, &amp;weibo.CreatedAt) //这里会调用Scanner
+        if err != nil {
+            log.Println(err)
+        }
+    }
+    log.Println(weibo)
+}
+</code></pre>
+
+<p>另外，经测试，如使用<a href="https://github.com/jinzhu/gorm">Gorm</a>框架，实现Scanner和Valuer接口后可直接使用，但如果接口实现不正确，Gorm不会报错，插入/查询的JSON对象为空。</p>
+
+<p>PS：因为需要实现(implemen) interface{}，所以对于数组类型也需要包装成对象后再实现接口,
+如：数据库存了 <code>[]*YourStruct{}</code>的JSON数据，需要封装为 <code>type Wrapper []*YourStruct</code>。</p>
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		&nbsp;
+	</div>
+</div>
+
+<div id="footer" class="row">
+	<div class="twelve columns">
+		<center>
+			<span style="font-size: small;">
+				[ powerd by <a href="https://github.com/spf13/hugo" class="copyright-link" target="#">hugo</a>, 
+				theme created by <a href="https://github.com/esell/rocktopus" class="copyright-link" target="#">esell</a> ]
+			</span>
+		</center>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+
+

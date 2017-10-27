@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on Singsen</title>
+    <link>https://blog.singsen.me/tags/golang/</link>
+    <description>Recent content in Golang on Singsen</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 07 Sep 2017 15:55:24 +0800</lastBuildDate>
+    
+	<atom:link href="https://blog.singsen.me/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>golang在MySQL中使用JSON对象</title>
+      <link>https://blog.singsen.me/2017/09/golang%E5%9C%A8mysql%E4%B8%AD%E4%BD%BF%E7%94%A8json%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Thu, 07 Sep 2017 15:55:24 +0800</pubDate>
+      
+      <guid>https://blog.singsen.me/2017/09/golang%E5%9C%A8mysql%E4%B8%AD%E4%BD%BF%E7%94%A8json%E5%AF%B9%E8%B1%A1/</guid>
+      <description>向数据库中插入JSON对象，需要结构体实现Valuer(database/sql/driver包)接口。
+从数据库中读取JSON对象，需要结构体实现Scanner(database/sql包)接口。
+比如发布一条微博或者动态附带一些图片之类的媒体文件,可以直接用JSON对象存入数据库：
+package main import ( _ &amp;quot;github.com/go-sql-driver/mysql&amp;quot; &amp;quot;database/sql&amp;quot; &amp;quot;database/sql/driver&amp;quot; &amp;quot;encoding/json&amp;quot; &amp;quot;log&amp;quot; &amp;quot;time&amp;quot; ) type Media struct { Path string Type int } type MediaList []*Media var _ sql.Scanner = &amp;amp;MediaList{} var _ driver.Valuer = MediaList{} //继承Scanner（Scan接受的是指针类型） func (m *MediaList) Scan(src interface{}) error { if src == nil { return nil } b, _ := src.([]byte) return json.Unmarshal(b, m) } //继承Valuer（INSERT时，Valuer不接受指针类型） func (m MediaList) Value() (driver.Value, error) { return json.</description>
+    </item>
+    
+  </channel>
+</rss>

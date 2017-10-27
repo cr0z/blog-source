@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>mysql权限配置</title>
+		<meta name="author" content="Singsen">
+		<meta name="generator" content="Hugo 0.21-DEV" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/raleway.css"  type="text/css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/skeleton.css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/custom.css">
+		<link rel="stylesheet" href="https://blog.singsen.me/css/font-awesome.min.css">
+		
+	</head>
+	<body class="color-scheme-dark">
+		<div class="container" style="border-bottom: 0px solid #eee;">
+			<div class="row">
+				<div class="eight columns">
+                                        
+					<a href="https://blog.singsen.me" class="sitename"><span style="font-size: 36px; ">my<b>Site</b></span></a>
+                                        
+					
+					<span style="font-size: 14px;">|<i>我有酒，你有故事吗</i></span>
+					
+				</div>
+				<div class="four columns" >
+					
+					
+					
+					
+					<a class="navbar-link" href="https://blog.singsen.me/tags">tags</a>
+					
+					
+					
+					<a class="navbar-link" href="https://blog.singsen.me/series">series</a>
+					
+					
+					
+					<a class="navbar-rlink" href="https://blog.singsen.me/contact">contact</a>
+					
+					
+					
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			
+			<div class="row">
+				<div class="twelve columns" >
+					<img class="u-max-full-width" src="https://blog.singsen.me/img/head.jpg">
+				</div>
+			</div>
+			
+
+
+
+<div class="row">
+	<div class="twelve columns">
+		<a class="post-title-link" href="https://blog.singsen.me/2017/09/mysql%E6%9D%83%E9%99%90%E9%85%8D%E7%BD%AE/">mysql权限配置</a>
+	</div>
+</div>
+<div class="row">
+	<div class="nine columns">
+		<span class="post-postedby">posted by  on Sep 07, 2017</span>
+	</div>
+	<div class="three columns">
+		<span style="font-size:small;">
+			
+			<i class="fa fa-tags"></i> <a href="https://blog.singsen.metags/mysql" class="tag-link">mysql</a> 
+			
+		</span>
+	</div>
+</div>
+<div class="row">
+	<div class="twelve columns">
+		<p>查看用户root的权限:<br />
+<code>SHOW GRANTS FOR root;</code></p>
+
+<p>刷新用户权限:<br />
+<code>FLUSH PRIVILEGES;</code></p>
+
+<p>创建用户:<br />
+<code>CREATE USER 'croz'@'localhost' IDENTIFIED BY '[YOURPASSWORD]';</code></p>
+
+<p>赋予&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户数据库&rsquo;shzl&rsquo;的所有权限:<br />
+<code>GRANT ALL PRIVILEGES ON shzl.* TO 'croz'@'%';</code></p>
+
+<p>赋予&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户数据库&rsquo;shzl&rsquo;的SELECT权限:<br />
+<code>GRANT SELECT ON shzl.* TO 'croz'@'%';</code><br />
+(其他权限替换<code>SLELECT</code>为<code>UPDATE</code>、<code>DELETE</code>等)</p>
+
+<p>移除&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户对数据库&rsquo;shzl&rsquo;的所有权限:<br />
+<code>REVOKE ALL PRIVILEGES ON shzl.* FROM 'croz'@'%';</code></p>
+
+<p>移除&rsquo;croz&rsquo;@&lsquo;%&lsquo;用户对数据库&rsquo;shzl&rsquo;的SELECT权限:<br />
+<code>REVOKE SELECT ON shzl.* FROM 'croz'@'%';</code></p>
+
+<p>修改权限后刷新权限:<br />
+<code>FLUSH PRIVILEGES</code></p>
+
+<p>host修改为 %后还是不能远程访问，错误码 111:<br />
+错误原因:mysql启动时只绑定了本地地址,修改<code>/etc/mysql/my.cnf</code>,注释掉以下内容:<br />
+<code>bind-address            = 127.0.0.1</code><br />
+(也可能my.cnf里只有两个include，就到include的目录下找相关配置，如 /etc/mysql/mysql.conf.d/mysqld.cnf)<br />
+最后重启mysql<br />
+<code>sudo /etc/init.d/mysql restart</code></p>
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		&nbsp;
+	</div>
+</div>
+
+<div id="footer" class="row">
+	<div class="twelve columns">
+		<center>
+			<span style="font-size: small;">
+				[ powerd by <a href="https://github.com/spf13/hugo" class="copyright-link" target="#">hugo</a>, 
+				theme created by <a href="https://github.com/esell/rocktopus" class="copyright-link" target="#">esell</a> ]
+			</span>
+		</center>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+
+
