@@ -1,9 +1,10 @@
-baseurl = "http://localhost:1313"
+publishDir = "blog"
+baseurl = "https://blog.singsen.me"
 languageCode = "zh-cn"
 title = "Singsen"
 theme = "rocktopus"
 GoogleAnalytics = ""
-paginate = 4
+paginate = 8
 MetaDataFormat = "toml"
 [permalinks]
     post = "/:year/:month/:title/"

@@ -24,4 +24,4 @@ The sample config file is pretty well documented and explains what setting does 
 * There are some sample images that come with the theme for the header section but you'll probably want to set your own, just put it into your `static/img` directory update the filename in your config.
 
 # Demo
-You can see a live version of this template at [esheavyindustries.com](http://esheavyindustries.com)
+You can see a live version of this template at [esheavyindustries.com](https://esheavyindustries.com)
